@@ -124,16 +124,16 @@ workspace-group-automation
 
 ```
 GRUPOS: colaboradores, mídia
-CLIENTES: Pepsico
+CLIENTES: CLIENTE
 ```
 
 ### Exemplo de saída
 
 ```
-colaboradores@ampfy.com
-midia@ampfy.com
-acessoclientes@ampfy.com
-acessoclientesbakery@bakery.ag
+colaboradores@dominio.com
+midia@dominio.com
+acessoclientes@domino.com
+acessoclientesclienteespecifico@dominio.com
 ```
 
 ---
