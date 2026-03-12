@@ -1,0 +1,26 @@
+# python
+__pycache__/
+*.pyc
+
+# virtual environment
+venv/
+
+# environment variables
+.env
+
+# google credentials
+credentials.json
+
+# logs
+logs/
+*.log
+
+# data files
+data/*.csv
+reports/*.csv
+
+# vscode
+.vscode/
+
+# mac
+.DS_Store
