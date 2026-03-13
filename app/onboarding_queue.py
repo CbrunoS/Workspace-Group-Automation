@@ -14,6 +14,15 @@ QUEUE_COLUMNS = [
     "processed_at",
 ]
 
+TEXT_COLUMNS = [
+    "message_id",
+    "email",
+    "groups",
+    "status",
+    "created_at",
+    "processed_at",
+]
+
 
 def ensure_queue_file_exists(queue_file: Path) -> None:
     if not queue_file.exists():
@@ -23,13 +32,21 @@ def ensure_queue_file_exists(queue_file: Path) -> None:
 
 def load_queue(queue_file: Path) -> pd.DataFrame:
     ensure_queue_file_exists(queue_file)
-    df = pd.read_csv(queue_file)
+
+    df = pd.read_csv(queue_file, dtype=str)
 
     for column in QUEUE_COLUMNS:
         if column not in df.columns:
             df[column] = ""
 
-    return df[QUEUE_COLUMNS]
+    df = df[QUEUE_COLUMNS]
+
+    for column in TEXT_COLUMNS:
+        df[column] = df[column].fillna("").astype(str)
+
+    df["attempts"] = pd.to_numeric(df["attempts"], errors="coerce").fillna(0).astype(int)
+
+    return df
 
 
 def save_queue(df: pd.DataFrame, queue_file: Path) -> None:
@@ -89,8 +106,8 @@ def add_onboarding_to_queue(
     new_row = pd.DataFrame(
         [
             {
-                "message_id": message_id,
-                "email": email,
+                "message_id": str(message_id),
+                "email": str(email),
                 "groups": ";".join(groups),
                 "status": "pending",
                 "attempts": 0,
@@ -126,12 +143,12 @@ def update_record_status(
     df = load_queue(queue_file)
 
     mask = df["message_id"].astype(str) == str(message_id)
-    df.loc[mask, "status"] = status
+    df.loc[mask, "status"] = str(status)
 
     if attempts is not None:
-        df.loc[mask, "attempts"] = attempts
+        df.loc[mask, "attempts"] = int(attempts)
 
     if processed_at is not None:
-        df.loc[mask, "processed_at"] = processed_at
+        df.loc[mask, "processed_at"] = str(processed_at)
 
     save_queue(df, queue_file)
